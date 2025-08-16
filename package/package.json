@@ -1,0 +1,49 @@
+{
+  "name": "directnext",
+  "version": "1.0.0",
+  "description": "A Next.js package for integrating Directus CMS with visual editing capabilities and automatic TypeScript type generation",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "generate:types": "node scripts/generate-types.js",
+    "postinstall": "node scripts/setup-config.js"
+  },
+  "keywords": [
+    "nextjs",
+    "directus",
+    "cms",
+    "visual-editing",
+    "typescript",
+    "blocks",
+    "headless-cms",
+    "react"
+  ],
+  "author": "Izaak Ford-Dow",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@directus/visual-editing": "^1.1.0",
+    "directus-typescript-gen": "^1.0.0",
+    "dotenv": "^16.6.1",
+    "next": "^15.4.6",
+    "react": "^19.1.1"
+  }
+}

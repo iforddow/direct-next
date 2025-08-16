@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - directus
+    environment:
+      POSTGRES_USER: "directus"
+      POSTGRES_PASSWORD: ${SOFTWARE_PASSWORD}
+      POSTGRES_DB: "directus"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U directus -d directus"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:latest
+    restart: always
+    networks:
+      - directus
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  directus:
+    image: directus/directus:11.10.2
+    restart: always
+    ports:
+      - 8055:8055
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+      - ./schema:/directus/schema
+    networks:
+      - directus
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    environment:
+      KEY: ${SOFTWARE_PASSWORD}
+      SECRET: ${SOFTWARE_PASSWORD}
+      PUBLIC_URL: http://${DOMAIN}
+      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: "localhost:3000"
+      DB_CLIENT: "pg"
+      DB_HOST: "database"
+      DB_PORT: "5432"
+      DB_DATABASE: "directus"
+      DB_USER: "directus"
+      DB_PASSWORD: ${SOFTWARE_PASSWORD}
+      CACHE_ENABLED: "true"
+      CACHE_STORE: "redis"
+      CACHE_REDIS: "redis://cache:6379"
+      REDIS: "redis://cache:6379"
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      CACHE_AUTO_PURGE: "true"
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: http://localhost:3000
+      CORS_METHODS: GET,POST,PATCH,DELETE
+      CORS_ALLOWED_HEADERS: Content-Type,Authorization
+      WEBSOCKETS_ENABLED: "true"
+    command: ["npx", "directus", "start"]
+networks:
+  directus:
