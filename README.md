@@ -1,3 +1,5 @@
+Note: This is a generated README. I will be making a real one soon, but for now this is AI's sloppy description of what I asked it for.
+
 # Direct-Next
 
 Direct-Next is a powerful integration solution that enables seamless connection between Next.js websites and Directus CMS. This project provides everything you need to quickly build content-driven websites with visual editing capabilities.
