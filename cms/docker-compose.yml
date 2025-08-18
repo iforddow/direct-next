@@ -1,0 +1,76 @@
+name: directus-cms
+
+services:
+  database:
+    image: postgres:17.5
+    restart: always
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - directus
+    environment:
+      POSTGRES_USER: "directus"
+      POSTGRES_PASSWORD: ${SOFTWARE_PASSWORD}
+      POSTGRES_DB: "directus"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U directus -d directus"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:8.2.0
+    restart: always
+    networks:
+      - directus
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  directus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8055:8055
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+      - ./schema:/directus/schema
+    networks:
+      - directus
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    environment:
+      KEY: ${KEY}
+      SECRET: ${SECRET}
+      PUBLIC_URL: ${DOMAIN}
+      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: ${CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC}
+      DB_CLIENT: "pg"
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${SOFTWARE_PASSWORD}
+      CACHE_ENABLED: ${CACHE_ENABLED}
+      CACHE_STORE: ${CACHE_STORE}
+      CACHE_REDIS: ${CACHE_REDIS}
+      REDIS: ${REDIS}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      CACHE_AUTO_PURGE: ${CACHE_AUTO_PURGE}
+      CACHE_SCHEMA: ${CACHE_SCHEMA}
+      CORS_ENABLED: ${CORS_ENABLED}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      CORS_METHODS: ${CORS_METHODS}
+      CORS_ALLOWED_HEADERS: ${CORS_ALLOWED_HEADERS}
+      WEBSOCKETS_ENABLED: ${WEBSOCKETS_ENABLED}
+    command: ["/bin/sh", "/directus/start-directus.sh"]
+networks:
+  directus:

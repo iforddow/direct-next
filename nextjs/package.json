@@ -1,0 +1,33 @@
+{
+  "name": "direct-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "generate:types": "node direct-next/scripts/generate-types.js"
+  },
+  "dependencies": {
+    "@directus/sdk": "^20.0.2",
+    "@directus/types": "^13.2.1",
+    "@directus/visual-editing": "^1.1.0",
+    "directus-typescript-gen": "^1.0.0",
+    "fs-extra": "^11.3.1",
+    "next": "15.4.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "swagger-client": "^3.35.6"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^17.2.1",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "typescript": "^5"
+  }
+}
